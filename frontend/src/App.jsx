@@ -1,14 +1,34 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Login from './Login/Login'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import SignUp from './Login/Signup'
+import {Loader} from 'lucide-react'
+import useAuthStore from '../store/useAuthStore'
+import Home from './Home/Home'
 
 const App = () => {
+  const {authUser, checkAuth, isCheckingAuth} = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  console.log("Auth User:", authUser);
+
+  if (isCheckingAuth && !authUser) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="animate-spin text-slate-500" size={35} />
+      </div>
+    );
+  }
+  
   return (
     <div>
       <Routes>
-        <Route path="/login" element={<Login/>} />
-        <Route path="/signup" element={<SignUp/>} />
+        
+        <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
       </Routes>
     </div>
   )

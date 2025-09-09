@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { axiosInstance } from '../lib/axios.js';
-import toast from 'react-hot-toast';
+import { axiosInstance } from '../utils/axiosInstance.js';
 
 export const useAuthStore = create((set) => ({
 	authUser: null,
@@ -27,17 +26,17 @@ export const useAuthStore = create((set) => ({
 	},
 
     signup: async (userData) => {
+        console.log("Signing up with data:", userData);
         set({ isSigningUp: true });
+        
         try {
             const res = await axiosInstance.post("/auth/signup", userData);
             set({
                 authUser: res.data,
                 isLoggedIn: true,
             });
-            toast.success("Account created successfully!");
         } catch (error) {
             console.error("Error in signup:", error);
-            toast.error(error.response?.data?.message || "An error occurred during sign up.");
             set({
                 authUser: null,
                 isLoggedIn: false,
@@ -55,10 +54,8 @@ export const useAuthStore = create((set) => ({
 				authUser: res.data,
 				isLoggedIn: true,
 			});
-			toast.success("Logged in successfully");
 		} catch (error) {
 			console.error("Error in login:", error);
-			toast.error(error.response?.data?.message || "Invalid credentials.");
 			set({
 				authUser: null,
 				isLoggedIn: false,
@@ -75,10 +72,8 @@ export const useAuthStore = create((set) => ({
 				authUser: null,
 				isLoggedIn: false,
 			});
-			toast.success("Logged out successfully");
 		} catch (error) {
 			console.error("Error in logout:", error);
-			toast.error(error.response?.data?.message || "An error occurred during logout.");
 		}
 	},
 }));
