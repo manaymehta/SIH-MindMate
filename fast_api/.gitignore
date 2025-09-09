@@ -1,0 +1,17 @@
+# Python / FastAPI
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+.env
+
+# misc
+.DS_Store
+.idea/
+.vscode/
+*.log
+*.sublime-workspace
+*.sublime-project
+coverage/
