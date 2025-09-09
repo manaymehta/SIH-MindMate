@@ -1,0 +1,225 @@
+:root {
+  --beige-primary: #f5f2ea;
+  --beige-light: #faf8f4;
+  --beige-dark: #e8e1d4;
+  --brown-muted: #8a7c6c;
+  --brown-dark: #5a4e42;
+  --green-accent: #a5c8a4;
+  --green-dark: #568254;
+  --yellow-pastel: #f9e6b3;
+  --shadow-soft: 0 4px 12px rgba(90, 78, 66, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Apply styles to the root element where the React app mounts */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--beige-primary);
+  color: var(--brown-dark);
+  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width: 1100px;
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+@media (min-width: 900px) {
+  .container {
+    flex-direction: row;
+    min-height: 650px;
+  }
+}
+
+.left-panel {
+  flex: 1;
+  background: linear-gradient(135deg, var(--beige-light) 0%, var(--beige-dark) 100%);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.logo {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--brown-dark);
+}
+
+.logo::after {
+  content: "™";
+  font-size: 10px;
+  vertical-align: super;
+  margin-left: 2px;
+}
+
+.image-container {
+  margin: 20px 0;
+}
+
+.image-container img {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+}
+
+.welcome-content {
+  max-width: 500px;
+}
+
+.welcome-content h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 26px;
+  margin-bottom: 20px;
+  color: var(--brown-dark);
+  line-height: 1.3;
+}
+
+.welcome-content p {
+  color: var(--brown-muted);
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.features {
+  list-style: none;
+  margin-top: 30px;
+}
+
+.features li {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: var(--brown-dark);
+  text-align: left;
+}
+
+.features i {
+  margin-right: 15px;
+  font-size: 1.4rem;
+  color: var(--green-accent);
+  background: rgba(165, 200, 164, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.right-panel {
+  flex: 1;
+  padding: 40px 30px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.signup-form {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.signup-form h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  margin-bottom: 25px;
+  color: var(--brown-dark);
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--brown-dark);
+  font-size: 15px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--beige-dark);
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background-color: var(--beige-light);
+  color: var(--brown-dark);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--green-accent);
+  box-shadow: 0 0 0 3px rgba(165, 200, 164, 0.2);
+}
+
+.btn-signup {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--green-accent);
+  color: var(--brown-dark);
+  border: none;
+  border-radius: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+}
+
+.btn-signup:hover {
+  background-color: var(--green-dark);
+  transform: translateY(-2px);
+}
+
+.login-link {
+  text-align: center;
+  font-size: 15px;
+  color: var(--brown-muted);
+}
+
+.login-link a {
+  color: var(--green-dark);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
