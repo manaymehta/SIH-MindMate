@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import Login from './Login/Login'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import SignUp from './Login/Signup'
 import {Loader} from 'lucide-react'
 import useAuthStore from '../store/useAuthStore'
 import Home from './Home/Home'
@@ -26,7 +25,6 @@ const App = () => {
   return (
     <div>
       <Routes>
-        
         <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
         <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
       </Routes>

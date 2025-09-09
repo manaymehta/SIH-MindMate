@@ -20,17 +20,17 @@ export const signup = async (req, res) => {
         //password hashing
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        //create user
+        //create user 
         const newUser = new User({
             fullname,
             email,
-            password: hashedPassword
+            password: hashedPassword,
         })
 
         if (newUser) {
             generateToken(newUser._id, res)
             await newUser.save();
-            return res.status(201).json({ "message": "user created successfully", "user": { _id: newUser._id, fullname: newUser.fullname, email: newUser.email }})
+            return res.status(201).json({ "message": "user created successfully", "user": { _id: newUser._id, fullname: newUser.fullname, email: newUser.email,}})
         } else {
             return res.status(400).json({ message: "Invalid user data" })
         }
@@ -58,13 +58,12 @@ export const login = async (req, res) => {
         }
 
         generateToken(user._id, res);
-
+        console.log("User logged in:", user);
         res.status(200).json({
             message: "Logged in successfully",
             _id: user._id,
             fullname: user.fullname,
             email: user.email,
-            profilePic: user.profilePic,
         })
 
 

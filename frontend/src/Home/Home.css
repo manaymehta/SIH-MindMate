@@ -1,0 +1,59 @@
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f0f4f8;
+}
+
+.chatbot-container::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 20px solid white;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.chatbot-input:focus + .chatbot-container::before {
+  opacity: 1;
+}
+
+.feature-card {
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.chat-bubble {
+  max-width: 75%;
+  padding: 10px 15px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+}
+
+.user-bubble {
+  background-color: #0d9488;
+  color: white;
+  margin-left: auto;
+  border-bottom-right-radius: 5px;
+}
+
+.bot-bubble {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  margin-right: auto;
+  border-bottom-left-radius: 5px;
+}
+
+#chat-log {
+  scroll-behavior: smooth;
+}
