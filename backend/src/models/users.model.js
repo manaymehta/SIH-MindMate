@@ -15,11 +15,26 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             minlength: 6,
-        }
+        },
+        dailySentiments: [
+            {
+                date: {
+                    type: Date,
+                    required: true,
+                },
+                sentiment: {
+                    type: String,
+                    required: true,
+                },
+                confidence: {
+                    type: Number,
+                    required: true,
+                }
+            },
+        ],
     },
     {timestamps: true}
 );
-
 
 const User = mongoose.model("User", userSchema);
 

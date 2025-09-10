@@ -92,3 +92,30 @@ export const checkAuth = async (req, res, next) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
+
+export const updateUserSentiment = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { date, sentiment, confidence } = req.body;
+        console.log("Updating sentiment for user:", userId, { date, sentiment, confidence });
+
+        if (!date || !sentiment || !confidence) {
+            return res.status(400).json({ message: "Date, sentiment, and confidence are required." });
+        }
+
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        user.dailySentiments.push({ date: new Date(date), sentiment, confidence });
+        await user.save();
+
+        res.status(200).json({ message: "Sentiment updated successfully.", user });
+
+    } catch (error) {
+        console.error("Error updating user sentiment:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};

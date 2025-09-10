@@ -66,18 +66,15 @@ class BotResponse(BaseModel):
 class AnalysisResponse(BaseModel):
     sentiment: str = Field(..., example="Stressed")
     confidence: float = Field(..., example=0.95)
-    topics: List[str] = Field(..., example=["exams", "parental pressure"])
-    urgency: str = Field(..., example="High")
-    summary: str = Field(..., example="The user is feeling stressed due to exam pressure and parental expectations.")
 
 # --- 4. Master Prompts ---
 
 MASTER_PROMPT_CHAT = """
-You are 'MindWell', a caring wellness assistant for students in India. Your primary goal is to be a supportive and natural conversational partner. Your tone should always be calm, empathetic, and encouraging.
+You are 'Mind Mate', a caring wellness assistant for students in India, Kashmir. Your primary goal is to be a supportive and natural conversational partner. Your tone should always be calm, empathetic, and encouraging.
 
 Your conversational flow MUST follow these steps:
 1.  **Validate & Ask:** Acknowledge the user's feelings with an original, empathetic phrase. Then, in the SAME response, you MUST ask ONE gentle, open-ended question to understand more. **DO NOT offer a resource in this step.** Your only goal here is to listen and learn more.
-2.  **Listen & Offer:** **ONLY AFTER** the user has replied to your question from Step 1, you can then acknowledge their second message and gently offer ONE relevant resource. Phrase it as a helpful suggestion like, "Thank you for sharing that. It sounds like you're dealing with X, sometimes Y can help. Would you be interested...?"
+2.  **Listen & Offer:** **ONLY AFTER** the user has replied to your question from Step 1, you can then acknowledge their second message and gently offer ONE relevant resource if you feel the user is ending the conversation. Phrase it as a helpful suggestion like, "Thank you for sharing that. It sounds like you're dealing with X, sometimes Y can help. Would you be interested...?"
 
 **CRITICAL RULE for short answers:** If the user gives a short, dismissive reply like "no" or "nah", DO NOT PROBE FURTHER. Acknowledge their response and gracefully end the conversation with a supportive closing statement.
 
@@ -90,14 +87,14 @@ You are a guide, NOT a therapist. Keep responses concise.
 """
 
 MASTER_PROMPT_ANALYZE = """
-Analyze the following conversation transcript between a student ('User') and a wellness chatbot ('Bot').
+Analyze the following conversation history between a student ('User') and a wellness chatbot ('Bot').
+Each entry in the history is a JSON object with "role" (user/model) and "parts" (list of strings).
 Provide an overall analysis of the user's state throughout the conversation.
 Return ONLY a valid JSON object with the following keys:
-- "sentiment": The dominant sentiment of the user (e.g., "Anxious", "Stressed").
-- "confidence": A float between 0 and 1.
-- "topics": A JSON array of the main topics discussed (e.g., ["exams", "parental pressure"]).
-- "urgency": The overall urgency level ("Low", "Medium", or "High").
-- "summary": A one-sentence summary of the user's core issue.
+- "sentiment": The dominant sentiment of the user (eg. Positive States - Motivated, Confident, Relieved, Content,
+Neutral - Neutral 
+Negative States - Stressed, Anxious, Overwhelmed, Lonely, Tired, Frustrated, Hopeless).
+- "confidence": A float between -1 and 1. 0 if neutral.
 """
 
 # --- 5. Helper Function ---
@@ -128,7 +125,7 @@ async def chat(user_input: UserInput):
     try:
         # **OPTIMIZED:** The prompt is now a system instruction, not part of the history.
         model_with_instructions = genai.GenerativeModel(
-            'gemini-1.5-flash',
+            'gemini-2.0-flash',
             system_instruction=MASTER_PROMPT_CHAT
         )
         
@@ -142,32 +139,37 @@ async def chat(user_input: UserInput):
         raise HTTPException(status_code=500, detail=f"An error occurred with the AI service: {e}")
 
 
-@app.post("/api/analyze", response_model=AnalysisResponse, tags=["Analytics"])
-async def analyze(user_input: UserInput): # Re-using UserInput model for simplicity, expecting a long transcript
+@app.post("/api/sentiment", response_model=AnalysisResponse, tags=["Analytics"])
+async def sentiment_analysis(user_input: UserInput):
     """
     Performs a rich analysis of an entire conversation transcript.
-    The frontend should send the complete, formatted chat history in the 'message' field of a single history item.
+    The frontend should send the complete, formatted chat history.
     """
-    transcript = user_input.history[0].parts[0]
-    cleaned_transcript = clean_text(transcript)
+    full_transcript = ""
+    for message in user_input.history:
+        role = "User" if message.role == "user" else "Bot"
+        full_transcript += f"{role}: {message.parts[0]}\n"
+
+    cleaned_transcript = clean_text(full_transcript)
     
     if not cleaned_transcript:
-        return AnalysisResponse(sentiment="Neutral", confidence=1.0, topics=[], urgency="Low", summary="No meaningful text provided.")
+        return AnalysisResponse(sentiment="Neutral", confidence=1.0)
 
     try:
         # For one-shot analysis, concatenating the prompt is fine
-        full_prompt = f"{MASTER_PROMPT_ANALYZE}\n\nTranscript:\n'''{cleaned_transcript}'''"
-        model = genai.GenerativeModel('gemini-1.5-flash') # Using a fresh instance
+        full_prompt = f"{MASTER_PROMPT_ANALYZE}\n\nTranscript:\n'''{full_transcript}'''"
+        model = genai.GenerativeModel('gemini-2.0-flash') # Using a fresh instance
         response = await model.generate_content_async(full_prompt)
         
         response_text = response.text.strip().replace("`", "")
         if response_text.startswith("json"):
             response_text = response_text[4:]
         
+        print(f"Raw AI response: {response_text}") # Added for debugging
         analysis_data = json.loads(response_text)
         return AnalysisResponse(**analysis_data)
 
     except json.JSONDecodeError:
-        raise HTTPException(status_code=500, detail="AI model returned an invalid JSON format.")
+        raise HTTPException(status_code=500, detail="Failed to parse analysis response from AI.")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {e}")
+        raise HTTPException(status_code=500, detail=f"An error occurred with the AI service: {e}")
