@@ -1,5 +1,5 @@
 import express from 'express';
-import {signup, login, logout, checkAuth, updateUserSentiment} from '../controllers/auth.controller.js'
+import {signup, login, logout, checkAuth, updateUserSentiment, getUsers, getUserConfidence} from '../controllers/auth.controller.js'
 import { protectRoute } from '../middleware/auth.middleware.js';
 
 const router = express.Router()
@@ -14,4 +14,8 @@ router.get("/check", protectRoute, checkAuth)
 
 router.post('/users/:userId/sentiment', updateUserSentiment)
 
-export default router; 
+router.get('/users', protectRoute, getUsers);
+
+router.get('/users/:userId/confidence', protectRoute, getUserConfidence);
+
+export default router;

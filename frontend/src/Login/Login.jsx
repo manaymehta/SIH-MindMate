@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import useAuthStore from '../../store/useAuthStore';
+import signupImage from './image.signup.png'; // Import the image
 
 const Login = () => {
   const [isLoginView, setIsLoginView] = useState(true);
@@ -94,7 +95,7 @@ const Login = () => {
           <div className="logo">MindMate</div>
           <div className="welcome-content">
             <div className="image-container">
-              <img src="image.signup.png" alt="Mindful meditation" />
+              <img src={signupImage} alt="Mindful meditation" />
             </div>
             <h2>Your AI Mental Health Companion</h2>
             <p>
